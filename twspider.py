@@ -5,6 +5,8 @@ import json
 import sqlite3
 import ssl
 
+# Just remember, need twitter log in details / api keys to make work, in hidden.py
+
 TWITTER_URL = 'https://api.twitter.com/1.1/friends/list.json'
 
 conn = sqlite3.connect('spider.sqlite')
@@ -14,14 +16,15 @@ cur.execute('''
             CREATE TABLE IF NOT EXISTS Twitter
             (name TEXT, retrieved INTEGER, friends INTEGER)''')
 
-# Ignore SSL certificate errors
+# Ignore SSL certificate errors - need this for python to except twitter certificates
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
 
 while True:
     acct = input('Enter a Twitter account, or quit: ')
-    if (acct == 'quit'): break
+    if (acct == 'quit'):
+        break
     if (len(acct) < 1):
         cur.execute('SELECT name FROM Twitter WHERE retrieved = 0 LIMIT 1')
         try:
